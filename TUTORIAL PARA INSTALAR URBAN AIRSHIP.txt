@@ -1,0 +1,101 @@
+tg3dte@gmail.com
+dteuah2018
+
+1. Creamos un proyecto en firebase.com y en España con la cuenta mencionada arriba.
+
+2. Le damos a "Añade Firebase a tu aplicación de Android" y seguimos los pasos.
+
+3. Una vez finalizado, abrimos la configuracion del proyecto y dejamos abierta la pestaña "Mensajería en la nube".
+
+4. Ahora entramos en la dashboard de Urban Airship iniciando sesion con la misma cuenta de arriba y creamos un proyecto. Elegimos que sea en Android y después pegamos la Key larga del paso anterior y en package el ID del remitente que esta en Firebase.
+
+5. Después creamos un proyecto en Android Studio y copiamos las siguientes lineas de código:
+
+// Urban Airship SDK
+  compile 'com.urbanairship.android:urbanairship-sdk:9.0.+'
+  compile 'com.google.android.gms:play-services-gcm:11.8.0'
+
+  // Recommended for location services
+  compile 'com.google.android.gms:play-services-location:11.8.0'
+
+en el gradle (APP), en dependences
+
+6. Después en la ruta del proyecto Proyecto\app\src\main creamos una carpeta llamada "assest" y en Android Studio creamos en ella un archivo (file) que se llame airshipconfig.properties
+
+7. En ese archivo pegaremos este texto:
+
+developmentAppKey = (LA DA URBAN AIRSHIP)
+developmentAppSecret = (LA DA URBAN AIRSHIP)
+
+productionAppKey = (LA DA URBAN AIRSHIP)
+productionAppSecret = (LA DA URBAN AIRSHIP)
+
+# Toggles between the development and production app credentials
+# Before submitting your application to an app store set to true
+inProduction = false
+
+# LogLevel is "VERBOSE", "DEBUG", "INFO", "WARN", "ERROR" or "ASSERT"
+developmentLogLevel = DEBUG
+productionLogLevel = ERROR
+
+# FCM/GCM Sender ID
+fcmSenderId = ID DEL REMITENTE QUE ESTA EN FIREBASE
+
+# Notification customization
+notificationIcon = ic_notification
+notificationAccentColor = #ff0000
+
+# Optional, set the default notification channel
+notificationChannel = customChannel
+
+Para saber la appKey, Appsecret y fcmSenderId de nuestra app, tenemos que ir a la dashboard y al proyecto que corresponda con esta aplicacion y despues clickar en Settings>APIs&Integrations.
+
+8. Despues abrimos androidManifest.xml y copiamos debajo de "android:theme="@style/AppTheme">" estas lineas de codigo:
+
+<meta-data android:name="com.urbanairship.autopilot"
+          android:value="com.urbanairship.Autopilot"/>
+
+9. En la misma carpeta donde esta MainActivity creamos una clase que llamaremos como queramos. Un ejemplo de como debe ser es:
+public class EjemploDeNombre extends AutoPilot {
+
+  @Override
+  public void onAirshipReady(@NonNull UAirship airship) {
+      airship.getPushManager().setUserNotificationsEnabled(true);
+
+      // Android O
+      if (Build.VERSION.SDK_INT >= 26) {
+          Context context = UAirship.getApplicationContext();
+          NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+          NotificationChannel channel = new NotificationChannel("customChannel",
+                  context.getString(R.string.custom_channel_name),
+                  NotificationManager.IMPORTANCE_DEFAULT);
+
+          notificationManager.createNotificationChannel(channel);
+      }
+  }
+
+  @Override
+  public AirshipConfigOptions createAirshipConfigOptions(@NonNull Context context) {
+      AirshipConfigOptions options = new AirshipConfigOptions.Builder()
+          .setDevelopmentAppKey("Your Development App Key")
+          .setDevelopmentAppSecret("Your Development App Secret")
+          .setProductionAppKey("Your Production App Key")
+          .setProductionAppSecret("Your Production App Secret")
+          .setInProduction(!BuildConfig.DEBUG)
+          .setFcmSenderId("Your Google API Project Number") // FCM/GCM sender ID
+          .setNotificationIcon(R.drawable.ic_notification)
+          .setNotificationChannel("customChannel")
+          .build();
+
+      return options;
+  }
+}
+
+10. En MainActivity pegamos esta linea de codigo:
+
+UAirship.shared().getPushManager().setUserNotificationsEnabled(true);
+
+en la funcion OnCreate().
+
+11. IMPORTANTE. En el grandle (APP) debemos tener todas las dependencias con la misma version. Si no fuera así, deberiamos hacerlo a mano en la version que nos esté dando problemas. Es decir, si tenemos dependencias en la version 12.0.0 y otras en 12.0.1, debemos cambiar TODAS a la 12.0.1. Si no lo hacemos, es posible que al instalar la aplicacion en el movil, ésta no se abra.
