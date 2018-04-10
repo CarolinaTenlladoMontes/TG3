@@ -1,0 +1,84 @@
+tg3dte@gmail.com
+dteuah2018
+
+INSTALACIÓN:
+
+1.Creamos un proyecto en Android Studio.
+
+2. Copiamos estos fragmento de código:
+
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/'}
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.8.1'
+    }
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
+repositories {
+    maven { url 'https://maven.google.com' }
+
+al principio del todo en el grandle (APP) de nuestro proyecto.
+
+Luego copiamos esta linea de codigo:
+
+compile 'com.onesignal:OneSignal:[3.8.3, 3.99.99]'
+
+en Gradle (app), en sus dependencias junto a las demás que esten existentes.
+
+3. Copiamos este fragmento de codigo:
+
+manifestPlaceholders = [
+          onesignal_app_id: 'PUT YOUR ONESIGNAL APP ID HERE',
+          // Project number pulled from dashboard, local value is ignored.
+          onesignal_google_project_number: 'REMOTE']
+
+en Gradle (app), en android>defaultConfig junto lo demás que ya tenga.
+
+4. Importamos:
+
+import com.onesignal.OneSignal;
+
+a la clase MainActivity.java
+
+5. Añadimos las lineas de codigo:
+
+// OneSignal Initialization
+      OneSignal.startInit(this)
+        .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+        .unsubscribeWhenNotificationsAreDisabled(true)
+        .init();
+
+debajo de onCreate del primer metodo de nuestra clase MainActivity.java.
+
+6. Entramos en firebase.com con la cuenta de correo del principio de este documentoy vamos a la consola (arriba)
+
+7.Creamos un proyecto en España.
+
+8. Una vez creado, damos al botón que dice "Añade Firebase a tu aplicación de Android".
+
+9. Añadimos el paquete de nuestro proyecto de Android Studio. App nickname y debug signing certificate no son obligatorio.
+
+10. Una vez hecho descargamos el archivo que nos ofrece y lo guardamos en la carpeta donde tenemos el proyecto de Android Studio. En mi caso: C:\Users\Estefania\AndroidStudioProjects\Pruebaonesignal\app
+
+11. Una vez hecho esto, copiamos los fragmentos de código donde nos dice. NO OLVIDAR ACTUALIZAR EL ARCHIVO GRANDLE CUANDO ACABES.
+
+12. Cuando termine, finalizamos la ventana en la pagina web y ahora nos saldran graficos en blanco de la actividad de nuestra app. Damos a los tres puntitos en vertical que hay al lado de esos graficos y después a "configuración". Después elegimos "Mensajería en la nube" y lo dejamos abierto para mas tarde.
+
+13. Entramos en el Dashboard de OneSignal con nuestra cuenta
+
+14. Creamos una nueva app y la llamamos como el paquete del proyecto de Android Studio. En mi caso: "com.example.estefania.pruebaonesignal"
+
+15. En la nueva ventana elegimos "Google Android (GCM)" y clicamos "SAVE"
+
+16. En esta ventana tenemos que añadir los codigos que hemos dejado abiertos en Firebase en el paso 12. En el formulario Google Server API key, pegamos el codigo con el mismo nombre en Firebase (el más largo). En Google Project Number pegamos el codigo de Server ID en Firebase. Cuando hayamos terminado clicamos SAVE.
+
+17. Elegimos Native Android y clicamos Next.
+
+18. Copiamos la APP ID que nos ofrece OneSignal en esta nueva ventana y lo pegamos en el codigo que hemos pegado en nuestro proyecto de Android Studio del paso 3.
+
+19. Cliclamos para que compruebe que funciona correctamente. Si lo hemos hecho todo correctamente, deberia funcionarnos.
+
+FIN.
